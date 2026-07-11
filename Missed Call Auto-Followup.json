@@ -1,0 +1,560 @@
+{
+  "name": "Missed Call Auto-Followup",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "missed-call",
+        "options": {}
+      },
+      "name": "Twilio Missed Call Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -272,
+        -32
+      ],
+      "id": "0821dcd0-130e-41c5-975e-cb2aeb05673c",
+      "webhookId": "e26e792d-e56a-4e00-b2a8-d8cf4776d6d1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.body.CallStatus }}",
+              "rightValue": "no-answer",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "name": "Was Call Missed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -64,
+        -32
+      ],
+      "id": "7127b981-0f75-42f8-a46a-e8f071484d78"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "mc-a1",
+              "name": "callerPhone",
+              "type": "string",
+              "value": "={{ $json.body.From }}"
+            },
+            {
+              "id": "mc-a2",
+              "name": "calledNumber",
+              "type": "string",
+              "value": "={{ $json.body.To }}"
+            },
+            {
+              "id": "mc-a3",
+              "name": "callStatus",
+              "type": "string",
+              "value": "={{ $json.body.CallStatus }}"
+            },
+            {
+              "id": "mc-a4",
+              "name": "callTime",
+              "type": "string",
+              "value": "={{ $now }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Extract Call Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -128
+      ],
+      "id": "2280a825-54a6-4e1a-b63d-1fb9cec86791"
+    },
+    {
+      "parameters": {
+        "from": "+14155238886",
+        "to": "={{ $json.callerPhone }}",
+        "toWhatsapp": true,
+        "message": "=Hi! Sorry we missed your call 🙏 We'd love to help you — what can we assist you with? We'll get back to you as soon as possible.",
+        "options": {}
+      },
+      "name": "Send WhatsApp to Caller",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -128
+      ],
+      "id": "8ffbe24b-4637-423b-947b-d6ad375d014b",
+      "credentials": {
+        "twilioApi": {
+          "id": "5yEuBRkKlsMzrOuR",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Z3S3BIXPNwpe-gMlRWWy_rG9v18kT0h4axxwCYP9c4k",
+          "mode": "list",
+          "cachedResultName": "Missed call auto followup",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z3S3BIXPNwpe-gMlRWWy_rG9v18kT0h4axxwCYP9c4k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z3S3BIXPNwpe-gMlRWWy_rG9v18kT0h4axxwCYP9c4k/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "={{ $json.status }}",
+            "CallerPhone": "={{ $('Extract Call Details').item.json.callerPhone }}",
+            "CalledNumber": "={{ $('Extract Call Details').item.json.calledNumber }}",
+            "CallTime": "={{ $('Extract Call Details').item.json.callTime }}",
+            "FollowedUp": "=",
+            "ReplyTime": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CallerPhone",
+              "displayName": "CallerPhone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CalledNumber",
+              "displayName": "CalledNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CallTime",
+              "displayName": "CallTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FollowedUp",
+              "displayName": "FollowedUp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LeadReply",
+              "displayName": "LeadReply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ReplyTime",
+              "displayName": "ReplyTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        -128
+      ],
+      "id": "1f329037-4c72-4339-bfc4-be384668dc04",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5aRtmOUr8Wo412bf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6602769314",
+        "text": "=📵 Missed Call Alert!\n\nCaller: {{ $('Extract Call Details').item.json.callerPhone }}\nTime: {{ $('Extract Call Details').item.json.callTime }}\n\n✅ WhatsApp followup sent automatically.\nIf they reply, you'll be notified here.",
+        "additionalFields": {}
+      },
+      "name": "Notify Owner on Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        -128
+      ],
+      "id": "359bd070-22ca-45ac-bdec-f4152a80c072",
+      "webhookId": "bfc24ea4-7bc1-4565-9189-8a94eafd2d85",
+      "credentials": {
+        "telegramApi": {
+          "id": "YuMHqQq1q2zwHbKw",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-reply",
+        "options": {}
+      },
+      "name": "Caller Replies on WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -272,
+        288
+      ],
+      "id": "60f9b482-6fa0-462d-bb48-9e11fc6fdb16",
+      "webhookId": "62ea2e8a-de75-4b91-bea1-7ea09593437c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "mc-b1",
+              "name": "replyFrom",
+              "type": "string",
+              "value": "={{ $json.body.From }}"
+            },
+            {
+              "id": "mc-b2",
+              "name": "replyMessage",
+              "type": "string",
+              "value": "={{ $json.body.Body }}"
+            },
+            {
+              "id": "mc-b3",
+              "name": "replyTime",
+              "type": "string",
+              "value": "={{ $now }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Extract Reply Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        288
+      ],
+      "id": "bebf588d-9a1a-456a-bbb3-32331f39efc2"
+    },
+    {
+      "parameters": {
+        "chatId": "6602769314",
+        "text": "=💬 Lead replied on WhatsApp!\n\nFrom: {{ $json.replyFrom }}\nMessage: {{ $json.replyMessage }}\nTime: {{ $json.replyTime }}\n\nReply to them on WhatsApp to close the deal! 🔥",
+        "additionalFields": {}
+      },
+      "name": "Forward Reply to Owner",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        288
+      ],
+      "id": "75805a86-cefb-4e14-bb3b-179c5203825f",
+      "webhookId": "3571aa75-658d-444b-aa18-3bcddfc17688",
+      "credentials": {
+        "telegramApi": {
+          "id": "YuMHqQq1q2zwHbKw",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Z3S3BIXPNwpe-gMlRWWy_rG9v18kT0h4axxwCYP9c4k",
+          "mode": "list",
+          "cachedResultName": "Missed call auto followup",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z3S3BIXPNwpe-gMlRWWy_rG9v18kT0h4axxwCYP9c4k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z3S3BIXPNwpe-gMlRWWy_rG9v18kT0h4axxwCYP9c4k/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "CallerPhone": "={{ $('Extract Reply Details').item.json.replyFrom }}",
+            "Status": "={{ \"Replied - needs follow-up\" }}",
+            "LeadReply": "={{ $('Extract Reply Details').item.json.replyMessage }}",
+            "ReplyTime": "={{ $('Extract Reply Details').item.json.replyTime }}"
+          },
+          "matchingColumns": [
+            "CallerPhone"
+          ],
+          "schema": [
+            {
+              "id": "CallerPhone",
+              "displayName": "CallerPhone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CalledNumber",
+              "displayName": "CalledNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CallTime",
+              "displayName": "CallTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FollowedUp",
+              "displayName": "FollowedUp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LeadReply",
+              "displayName": "LeadReply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ReplyTime",
+              "displayName": "ReplyTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "name": "Update Sheet with Reply",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        288
+      ],
+      "id": "68198988-7402-4236-b9b3-cf5339183c76",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5aRtmOUr8Wo412bf",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Twilio Missed Call Webhook": {
+      "main": [
+        [
+          {
+            "node": "Was Call Missed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Was Call Missed?": {
+      "main": [
+        [
+          {
+            "node": "Extract Call Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Call Details": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp to Caller",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp to Caller": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Notify Owner on Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Caller Replies on WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Extract Reply Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Reply Details": {
+      "main": [
+        [
+          {
+            "node": "Forward Reply to Owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forward Reply to Owner": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet with Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": true
+  },
+  "versionId": "63509982-4368-4b61-bb56-350c36d7c28e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "59269da522f795e2e06123a6f458a47542811af62f1f6d137251abf30c528d4e"
+  },
+  "nodeGroups": [],
+  "id": "u18BQyitBNbtqT2m",
+  "tags": []
+}
