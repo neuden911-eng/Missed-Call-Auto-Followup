@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 📵 Missed Call Auto-Followup
 > Automatically follow up with anyone who called but got no answer — via WhatsApp. Built with n8n, Twilio & Telegram.
 
@@ -173,3 +174,7 @@ Pull requests welcome! If you improve this workflow, share it back.
 ---
 
 *Built with ❤️ using [n8n](https://n8n.io)*
+=======
+# Missed-Call-Auto-Followup
+Missed Call Auto-Followup — Automatically sends a WhatsApp message to anyone who calls and gets no answer. Captures their reply and forwards it to the business owner via Telegram. Logs all missed calls and responses to Google Sheets. Built with n8n, Twilio, and Telegram. Never lose a lead again.
+>>>>>>> 502e378810568f7a13c9d7fe1c2fbd631acb1556
